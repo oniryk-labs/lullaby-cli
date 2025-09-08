@@ -1,11 +1,10 @@
-![lullaby: no more commit nightmares](./banner.png)
+![lullaby: no more commit nightmares](https://github.com/oniryk-labs/lullaby-cli/blob/main/banner.png?raw=true)
 
 <div align="center">
   <h1>lullaby</h1>
   <p><strong>@oniryk/llby-cli ✦ no more commit nightmares</strong></p>
   <p>
     <a href="https://www.npmjs.com/package/@oniryk/llby-cli"><img src="https://img.shields.io/npm/v/@oniryk/llby-cli.svg" alt="NPM Version"/></a>
-    <a href="https://github.com/oniryk/llby-cli/actions/workflows/ci.yml"><img src="https://github.com/oniryk/llby-cli/actions/workflows/ci.yml/badge.svg" alt="Build Status"/></a>
     <a href="https://github.com/oniryk/llby-cli/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@oniryk/llby-cli.svg" alt="License"/></a>
   </p>
 </div>
@@ -70,5 +69,5 @@ That's it! Now, every time you run the `git commit` command, lullaby will interc
 Distributed under the MIT License. See `LICENSE` for more information.
 
 <div align="center">
-    <p>Made with ❤️ by <a href="https://oniryk.co/">oniryk labs</a></p>
+  <p>Made with ❤️ by <a href="https://oniryk.co/">oniryk labs</a></p>
 </div>
