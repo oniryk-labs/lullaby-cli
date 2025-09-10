@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { toast } from "../ui.js";
 
-const EXEC_LINE = `exec < /dev/tty && npx -y llby validate "$1"`;
+const EXEC_LINE = `exec < /dev/tty && npx -y @oniryk/llby-cli validate "$1"`;
 
 const getGitFolder = async () => {
   let currentDir = process.cwd();
@@ -30,6 +30,19 @@ const getGitFolder = async () => {
   return null;
 };
 
+const exists = async (path) => !!(await fs.stat(path).catch(() => false));
+
+const createHook = async (hookPath) => {
+  const content = `#!/bin/sh\n${EXEC_LINE}`;
+  await fs.writeFile(hookPath, content, { mode: 0o755 });
+
+  toast({
+    type: "success",
+    title: "setup complete",
+    message: `commit-msg hook created at ${hookPath}`,
+  });
+};
+
 const setup = async () => {
   const gitdir = await getGitFolder();
 
@@ -43,21 +56,27 @@ const setup = async () => {
     process.exit(1);
   }
 
-  const hookPath = path.join(gitdir, "hooks", "commit-msg");
+  const gitHookPath = path.join(gitdir, "hooks", "commit-msg");
   const huskyPath = path.resolve(gitdir, "..", ".husky");
 
-  if (await fs.stat(huskyPath).catch(() => false)) {
-    toast({
-      type: "error",
-      title: "husky detected",
-      icon: "🐶",
-      message: `please add the following line to your husky commit-msg hook:\n${EXEC_LINE}`,
-    });
+  if (await exists(huskyPath)) {
+    const hook = path.resolve(huskyPath, "commit-msg");
 
-    process.exit(1);
+    if (await exists(hook)) {
+      toast({
+        type: "error",
+        title: "husky hook already exists",
+        message: `please add the following line to your ./husky/commit-msg hook:\n${EXEC_LINE}`,
+      });
+
+      process.exit(1);
+    }
+
+    await createHook(hook);
+    process.exit(0);
   }
 
-  if (await fs.stat(hookPath).catch(() => false)) {
+  if (await fs.stat(gitHookPath).catch(() => false)) {
     toast({
       type: "error",
       title: "hook already exists",
@@ -67,16 +86,7 @@ const setup = async () => {
     process.exit(1);
   }
 
-  const hookContent = `#!/bin/sh
-  exec < /dev/tty && llby validate "$1"`;
-
-  await fs.writeFile(hookPath, hookContent, { mode: 0o755 });
-
-  toast({
-    type: "success",
-    title: "setup complete",
-    message: "commit-msg hook installed successfully",
-  });
+  await createHook(gitHookPath);
 };
 
 export default setup;
