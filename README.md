@@ -1,8 +1,8 @@
-![lullaby: no more commit nightmares](https://github.com/oniryk-labs/lullaby-cli/blob/main/banner.png?raw=true)
-
 <div align="center">
-  <h1>lullaby</h1>
+  <img src="https://raw.githubusercontent.com/oniryk-labs/lullaby-cli/blob/main/banner.png" alt="lullaby logo" width="100%"/>
+
   <p><strong>@oniryk/llby-cli ✦ no more commit nightmares</strong></p>
+
   <p>
     <a href="https://www.npmjs.com/package/@oniryk/llby-cli"><img src="https://img.shields.io/npm/v/@oniryk/llby-cli.svg" alt="NPM Version"/></a>
     <a href="https://github.com/oniryk/llby-cli/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@oniryk/llby-cli.svg" alt="License"/></a>
