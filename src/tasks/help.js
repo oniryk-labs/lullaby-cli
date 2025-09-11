@@ -9,6 +9,9 @@ const help = () => {
 
   commands:
     setup             Setup git hooks for commit message validation
+      --no-interaction   Create the hook with interaction disabled
+      --force            Override existing git hook if present
+
     auth <token>      Authenticate with your llby access token
     help              Display this help message
 `),

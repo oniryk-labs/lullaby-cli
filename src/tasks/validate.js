@@ -26,9 +26,9 @@ const safe = async (fn) => {
   }
 };
 
-const validate = async () => {
+const validate = async (file, interaction = true) => {
   const token = await getAccessToken();
-  const commit = path.resolve(process.cwd(), process.argv[3]);
+  const commit = path.resolve(process.cwd(), file);
   const message = await fs.readFile(commit, "utf8");
 
   const req = await safe(() =>
@@ -88,6 +88,11 @@ const validate = async () => {
         title: "suggestion",
         message: suggestion,
       });
+
+      if (!interaction) {
+        toast.error({ message: "please fix the issues above and try again" });
+        process.exit(1);
+      }
 
       const answer = await prompts({
         type: "confirm",

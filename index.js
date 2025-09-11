@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { argv } from "./src/argv.js";
 import banner from "./src/banner.js";
 import auth from "./src/tasks/auth.js";
 import help from "./src/tasks/help.js";
@@ -8,11 +9,11 @@ import validate from "./src/tasks/validate.js";
 import { toast } from "./src/ui.js";
 
 (async () => {
-  const [, , task] = process.argv;
+  const { task, params, flags } = argv();
   banner();
 
   if (task === "validate") {
-    await validate();
+    await validate(params[0], !flags.has("--no-interaction"));
     process.exit(0);
   }
 
@@ -22,7 +23,7 @@ import { toast } from "./src/ui.js";
   }
 
   if (task === "setup") {
-    await setup();
+    await setup(!flags.has("--no-interaction"), flags.has("--force"));
     process.exit(0);
   }
 
