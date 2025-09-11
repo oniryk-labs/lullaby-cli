@@ -2,7 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { toast } from "../ui.js";
 
-const EXEC_LINE = `exec < /dev/tty && npx -y @oniryk/llby-cli validate "$1"`;
+const EXEC_LINE = `exec < /dev/tty && npx @oniryk/llby-cli validate "$1"`;
 
 const getGitFolder = async () => {
   let currentDir = process.cwd();
