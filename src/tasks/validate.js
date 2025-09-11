@@ -110,7 +110,11 @@ const validate = async () => {
     process.exit(1);
   }
 
-  console.log(colors.bold.green("your commit message looks good 👍"));
+  console.log(
+    colors.bold.green(
+      " ✨✨ congratulations! your commit message looks awesome! ✨✨\n",
+    ),
+  );
 };
 
 export default validate;
