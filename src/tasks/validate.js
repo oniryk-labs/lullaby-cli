@@ -5,6 +5,7 @@ import path from "path";
 import prompts from "prompts";
 import { z } from "zod";
 import { getAccessToken } from "../access-token.js";
+import { argv } from "../argv.js";
 import { toast } from "../ui.js";
 
 const issue = z.object({
@@ -67,7 +68,12 @@ const validate = async (file, interaction = true) => {
   const data = parseResult.data;
 
   if (!data.valid) {
-    console.log(colors.bold(" 🚫 THERE IS SOME ISSUE IN YOUR COMMIT\n"));
+    const spacing = argv().flags.has("--no-decor") ? "" : " ";
+    const linebreaking = argv().flags.has("--no-decor") ? "" : "\n";
+    const error = "🚫 VALIDATION FAILED:";
+    const message = `${error} there are issues with your commit message.`;
+    console.log(colors.bold(`${spacing}${message}${linebreaking}`));
+
     const hasSuggestion = data.issues.some((issue) => issue.suggestion);
 
     for (const issue of data.issues) {
@@ -104,7 +110,7 @@ const validate = async (file, interaction = true) => {
       // remove line added by the prompt
       process.stdout.write("\u001b[1A\u001b[2K");
 
-      if (answer) {
+      if (answer.value) {
         await fs.writeFile(commit, suggestion, "utf8");
         toast.success({ title: "message updated", message: suggestion });
         process.exit(0);

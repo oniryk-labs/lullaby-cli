@@ -10,7 +10,10 @@ import { toast } from "./src/ui.js";
 
 (async () => {
   const { task, params, flags } = argv();
-  banner();
+
+  if (!flags.has("--no-decor")) {
+    banner();
+  }
 
   if (task === "validate") {
     await validate(params[0], !flags.has("--no-interaction"));

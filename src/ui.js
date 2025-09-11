@@ -1,3 +1,5 @@
+import { argv } from "./argv.js";
+
 class Toast {
   static icons = {
     success: "✓",
@@ -46,6 +48,27 @@ class Toast {
     return this.stripAnsi(text).slice(0, maxWidth - 3) + "...";
   }
 
+  static showUndecorated({
+    type = "info",
+    title,
+    message,
+    icon,
+    footNote,
+    maxWidth,
+  }) {
+    const displayIcon = icon || this.icons[type] || this.icons.info;
+
+    const firstLineContent = title
+      ? `(${displayIcon}) ${this.truncateText(title, maxWidth - 8)} ›`
+      : `(${displayIcon})`;
+
+    console.log(`${firstLineContent} ${message}`);
+
+    if (footNote) {
+      console.log(`\n(ℹ) ${footNote}`);
+    }
+  }
+
   static show({
     type = "info",
     title,
@@ -55,10 +78,20 @@ class Toast {
     lineDecorator = "",
     footNote,
   }) {
+    if (argv().flags.has("--no-decor")) {
+      return this.showUndecorated({
+        type,
+        title,
+        message,
+        icon,
+        footNote,
+        maxWidth,
+      });
+    }
+
     const displayIcon = icon || this.icons[type] || this.icons.info;
     const color = this.colors[type] || this.colors.info;
     const reset = this.colors.reset;
-
     const firstLineContent = title
       ? `(${displayIcon}) ${this.truncateText(title, maxWidth - 8)}`
       : `(${displayIcon})`;
@@ -135,6 +168,10 @@ toast.info = (options) => Toast.info(options);
 toast.loading = (options) => Toast.loading(options);
 
 export function decorateLine(text, decorator = "*", maxWidth = 80) {
+  if (argv().flags.has("--no-decor")) {
+    return text;
+  }
+
   return text
     .split("\n")
     .map((line) => {
