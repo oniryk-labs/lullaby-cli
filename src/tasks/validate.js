@@ -83,9 +83,8 @@ const validate = async () => {
         .filter((issue) => issue.suggestion)
         .map((issue) => issue.suggestion)[0];
 
-      toast({
-        type: "info",
-        icon: "📝",
+      toast.info({
+        icon: "✍",
         title: "suggestion",
         message: suggestion,
       });

@@ -36,8 +36,7 @@ const createHook = async (hookPath) => {
   const content = `#!/bin/sh\n${EXEC_LINE}`;
   await fs.writeFile(hookPath, content, { mode: 0o755 });
 
-  toast({
-    type: "success",
+  toast.success({
     title: "setup complete",
     message: `commit-msg hook created at ${hookPath}`,
   });
@@ -47,8 +46,7 @@ const setup = async () => {
   const gitdir = await getGitFolder();
 
   if (!gitdir) {
-    toast({
-      type: "error",
+    toast.error({
       title: "no git repository found",
       message: "please run this command inside a git repository",
     });
@@ -63,8 +61,7 @@ const setup = async () => {
     const hook = path.resolve(huskyPath, "commit-msg");
 
     if (await exists(hook)) {
-      toast({
-        type: "error",
+      toast.error({
         title: "husky hook detected",
         message: `please add the following line to ./husky/commit-msg \n${EXEC_LINE}`,
       });
@@ -77,8 +74,7 @@ const setup = async () => {
   }
 
   if (await fs.stat(gitHookPath).catch(() => false)) {
-    toast({
-      type: "error",
+    toast.error({
       title: "git hook detected",
       message: `please add the following line to .git/hooks/commit-msg \n\n${EXEC_LINE}`,
     });

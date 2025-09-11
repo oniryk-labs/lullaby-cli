@@ -31,8 +31,7 @@ import { toast } from "./src/ui.js";
     process.exit(0);
   }
 
-  toast({
-    type: "error",
+  toast.error({
     title: "unknown task",
     message: `the task "${task}" is not recognized`,
   });
