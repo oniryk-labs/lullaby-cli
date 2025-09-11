@@ -27,6 +27,21 @@ const safe = async (fn) => {
   }
 };
 
+const showErrorMessage = () => {
+  const noDecor = argv().flags.has("--no-decor");
+  const spacing = noDecor ? "" : " ";
+  const linebreaking = noDecor ? "" : "\n";
+  const error = "🚫 VALIDATION FAILED:";
+  const message = `${error} there are issues with your commit message.`;
+  const rendered = `${spacing}${message}${linebreaking}`;
+
+  if (!noDecor) {
+    console.log(rendered);
+  } else {
+    console.log(colors.bold(rendered));
+  }
+};
+
 const validate = async (file, interaction = true) => {
   const token = await getAccessToken();
   const commit = path.resolve(process.cwd(), file);
@@ -68,12 +83,7 @@ const validate = async (file, interaction = true) => {
   const data = parseResult.data;
 
   if (!data.valid) {
-    const spacing = argv().flags.has("--no-decor") ? "" : " ";
-    const linebreaking = argv().flags.has("--no-decor") ? "" : "\n";
-    const error = "🚫 VALIDATION FAILED:";
-    const message = `${error} there are issues with your commit message.`;
-    console.log(colors.bold(`${spacing}${message}${linebreaking}`));
-
+    showErrorMessage();
     const hasSuggestion = data.issues.some((issue) => issue.suggestion);
 
     for (const issue of data.issues) {
