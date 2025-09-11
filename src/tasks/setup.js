@@ -65,8 +65,8 @@ const setup = async () => {
     if (await exists(hook)) {
       toast({
         type: "error",
-        title: "husky hook already exists",
-        message: `please add the following line to your ./husky/commit-msg hook:\n${EXEC_LINE}`,
+        title: "husky hook detected",
+        message: `please add the following line to ./husky/commit-msg \n${EXEC_LINE}`,
       });
 
       process.exit(1);
@@ -79,8 +79,8 @@ const setup = async () => {
   if (await fs.stat(gitHookPath).catch(() => false)) {
     toast({
       type: "error",
-      title: "hook already exists",
-      message: `please add the following line to your .git/hooks/commit-msg hook:\n${EXEC_LINE}`,
+      title: "git hook detected",
+      message: `please add the following line to .git/hooks/commit-msg \n\n${EXEC_LINE}`,
     });
 
     process.exit(1);

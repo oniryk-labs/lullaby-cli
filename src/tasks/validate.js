@@ -1,56 +1,78 @@
-import { confirm } from "@inquirer/prompts";
-import { ArkErrors, type } from "arktype";
 import colors from "colors";
 import { promises as fs } from "fs";
+import fetch from "node-fetch";
 import path from "path";
-import { fetch } from "undici";
+import prompts from "prompts";
+import { z } from "zod";
 import { getAccessToken } from "../access-token.js";
 import { toast } from "../ui.js";
 
-const issue = type({
-  message: "string",
-  name: "string",
-  suggestion: "string?",
+const issue = z.object({
+  message: z.string(),
+  name: z.string(),
+  suggestion: z.string().optional(),
 });
 
-const schema = type({
-  valid: "boolean",
-  issues: issue.array(),
+const schema = z.object({
+  valid: z.boolean(),
+  issues: z.array(issue),
 });
+
+const safe = async (fn) => {
+  try {
+    return { ok: true, result: await fn() };
+  } catch (err) {
+    return { ok: false, error: err };
+  }
+};
 
 const validate = async () => {
   const token = await getAccessToken();
   const commit = path.resolve(process.cwd(), process.argv[3]);
   const message = await fs.readFile(commit, "utf8");
 
-  const req = await fetch("https://lullaby.oniryk.services/validate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ message }),
-  });
+  const req = await safe(() =>
+    fetch("https://lullaby.oniryk.services/validate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ message }),
+    }),
+  );
 
-  const data = schema(await req.json());
-
-  if (data instanceof ArkErrors) {
-    console.error("Response schema is not valid:", data);
+  if (!req.ok) {
+    const message = "failed to make request to the API: " + req.error.message;
+    toast.error({ title: "api error", message });
     process.exit(1);
   }
 
-  if (!data.valid) {
-    console.log(
-      colors.bold(
-        " 🚫 your commit message has some issues\n".toLocaleUpperCase(),
-      ),
-    );
+  const response = await safe(() => req.result.json());
 
+  if (!response.ok) {
+    const message = "failed to parse API response: " + response.error.message;
+    toast.error({ title: "api error", message });
+    process.exit(1);
+  }
+
+  const parseResult = schema.safeParse(response.result);
+
+  if (!parseResult.success) {
+    const message = "response schema is not valid";
+    toast.error({ title: "schema validation error", message });
+    process.exit(1);
+  }
+
+  const data = parseResult.data;
+
+  if (!data.valid) {
+    console.log(colors.bold(" 🚫 THERE IS SOME ISSUE IN YOUR COMMIT\n"));
     const hasSuggestion = data.issues.some((issue) => issue.suggestion);
 
     for (const issue of data.issues) {
       toast({
-        type: issue.suggestion ? "warn" : "error",
+        type: issue.suggestion ? "warning" : "error",
         title: issue.name,
         message: issue.message,
       });
@@ -63,39 +85,33 @@ const validate = async () => {
 
       toast({
         type: "info",
-        icon: "✦",
+        icon: "📝",
         title: "suggestion",
         message: suggestion,
       });
 
-      const answer = await confirm({
+      const answer = await prompts({
+        type: "confirm",
+        name: "value",
         message: "do you want to use the suggested message?",
-        default: true,
+        initial: true,
       });
 
-      // move cursor up and clear line
+      // remove line added by the prompt
       process.stdout.write("\u001b[1A\u001b[2K");
 
       if (answer) {
         await fs.writeFile(commit, suggestion, "utf8");
-
-        toast({
-          type: "success",
-          title: "message updated",
-          message: suggestion,
-        });
-
+        toast.success({ title: "message updated", message: suggestion });
         process.exit(0);
       }
     }
 
-    toast({
-      type: "error",
-      message: "please fix the issues above and try again",
-    });
-
+    toast.error({ message: "please fix the issues above and try again" });
     process.exit(1);
   }
+
+  console.log(colors.bold.green("your commit message looks good 👍"));
 };
 
 export default validate;

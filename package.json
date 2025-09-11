@@ -1,6 +1,6 @@
 {
   "name": "@oniryk/llby-cli",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "index.js",
   "type": "module",
   "bin": {
@@ -10,12 +10,11 @@
   "license": "MIT",
   "description": "validate commit messages",
   "dependencies": {
-    "arktype": "^2.1.22",
-    "boxen": "^8.0.1",
     "colors": "^1.4.0",
     "gradient-string": "^3.0.0",
-    "inquirer": "^12.9.4",
-    "undici": "^6.21.3"
+    "node-fetch": "^3.3.2",
+    "prompts": "^2.4.2",
+    "zod": "^4.1.5"
   },
   "publishConfig": {
     "access": "public"
