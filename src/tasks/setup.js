@@ -109,7 +109,7 @@ const setup = async () => {
     process.exit(1);
   }
 
-  await createHook(gitHookPath, interact);
+  await createHook(gitHookPath);
 };
 
 export default setup;
