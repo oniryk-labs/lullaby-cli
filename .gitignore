@@ -142,3 +142,4 @@ vite.config.ts.timestamp-*
 
 # Commit test file
 .COMMIT
+.DS_Store

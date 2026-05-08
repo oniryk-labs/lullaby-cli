@@ -191,3 +191,18 @@ export function decorateLine(text, decorator = "*", maxWidth = 80) {
     })
     .join("\n");
 }
+
+export function showErrorMessage() {
+  const noDecor = argv().flags.has("--no-decor");
+  const spacing = noDecor ? "" : " ";
+  const linebreaking = noDecor ? "" : "\n";
+  const error = "🚫 VALIDATION FAILED:";
+  const message = `${error} there are issues with your commit message.`;
+  const rendered = `${spacing}${message}${linebreaking}`;
+
+  if (!noDecor) {
+    console.log(rendered);
+  } else {
+    console.log(colors.bold(rendered));
+  }
+}

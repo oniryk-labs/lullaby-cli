@@ -64,6 +64,18 @@ npx @oniryk/llby-cli setup
 
 That's it! Now, every time you run the `git commit` command, lullaby will intercept the action, validate your message, and either allow or block the commit based on the Conventional Commits rules.
 
+#### Using without hooks
+
+If you prefer not to use Git Hooks, you can still validate your commit messages manually before committing. Simply run the following command with your commit message:
+
+```bash
+llby commit <commit-message>
+// or
+npx @oniryk/llby-cli commit <commit-message>
+```
+
+If the message is valid, the command will execute the commit for you. If not, it will provide feedback on what needs to be corrected.
+
 ## 📄 License
 
 Distributed under the MIT License. See `LICENSE` for more information.

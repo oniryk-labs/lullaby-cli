@@ -3,44 +3,10 @@ import { promises as fs } from "fs";
 import fetch from "node-fetch";
 import path from "path";
 import prompts from "prompts";
-import { z } from "zod";
 import { getAccessToken } from "../access-token.js";
-import { argv } from "../argv.js";
-import { toast } from "../ui.js";
-
-const issue = z.object({
-  message: z.string(),
-  name: z.string(),
-  suggestion: z.string().optional(),
-});
-
-const schema = z.object({
-  valid: z.boolean(),
-  issues: z.array(issue),
-});
-
-const safe = async (fn) => {
-  try {
-    return { ok: true, result: await fn() };
-  } catch (err) {
-    return { ok: false, error: err };
-  }
-};
-
-const showErrorMessage = () => {
-  const noDecor = argv().flags.has("--no-decor");
-  const spacing = noDecor ? "" : " ";
-  const linebreaking = noDecor ? "" : "\n";
-  const error = "🚫 VALIDATION FAILED:";
-  const message = `${error} there are issues with your commit message.`;
-  const rendered = `${spacing}${message}${linebreaking}`;
-
-  if (!noDecor) {
-    console.log(rendered);
-  } else {
-    console.log(colors.bold(rendered));
-  }
-};
+import { response as schema } from "../schemas.js";
+import { showErrorMessage, toast } from "../ui.js";
+import { safe } from "../util.js";
 
 const validate = async (file, interaction = true) => {
   const token = await getAccessToken();

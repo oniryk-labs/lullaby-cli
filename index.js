@@ -3,6 +3,7 @@
 import { argv } from "./src/argv.js";
 import banner from "./src/banner.js";
 import auth from "./src/tasks/auth.js";
+import commit from "./src/tasks/commit.js";
 import help from "./src/tasks/help.js";
 import setup from "./src/tasks/setup.js";
 import validate from "./src/tasks/validate.js";
@@ -13,6 +14,11 @@ import { toast } from "./src/ui.js";
 
   if (!flags.has("--no-decor")) {
     banner();
+  }
+
+  if (task === "commit") {
+    await commit(params[0]);
+    process.exit(0);
   }
 
   if (task === "validate") {
